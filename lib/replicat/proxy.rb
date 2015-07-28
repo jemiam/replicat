@@ -86,11 +86,19 @@ module Replicat
 
       def create
         ActiveRecord::ConnectionAdapters::ConnectionPool.new(
-          ActiveRecord::ConnectionAdapters::ConnectionSpecification::Resolver.new(
+          resolver_class.new(
             @configuration,
             nil,
           ).spec,
         )
+      end
+
+      def resolver_class
+        if ActiveRecord::VERSION::MAJOR >= 4
+          ActiveRecord::ConnectionAdapters::ConnectionSpecification::Resolver
+        else
+          ActiveRecord::Base::ConnectionSpecification::Resolver
+        end
       end
     end
 
